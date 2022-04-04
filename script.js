@@ -5,7 +5,7 @@
 // both var and let can be redefined
 // const can't be redefined
 
-import GLPK from '/glpk.js';
+import GLPK from './glpk.js';
 
 let maxd_lastmonth;
 let maxd_nextmonth;

@@ -1,0 +1,99 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scheduler</title>
+
+  <script src='https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js'></script>
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
+
+  <!-- This ridiculous hack is to force cache reloading -->
+  <script>
+    document.write(
+      "<script type='module' src='script.js?v=" + Math.random() + "'><\/script>"
+    );
+    document.write(
+      "<link rel='stylesheet' href='style.css?v=" + Math.random() + "'>"
+    );
+  </script>
+  
+</head>
+<body>
+
+  <div id="container">
+
+    <div id="panel">
+
+      <!-- last month"s slate -->
+      <div id="panel-lastmonth" class="section">
+        <button id="btn-demo" class="button">Demo</button>
+        <input id="btn-clear-lastmonth" class="button" type="button" value="Clear" />
+        <input id="input-lastmonth" type="text" value="March" placeholder="Month" />
+        <table id="table-lastmonth">
+          <colgroup>
+            <col class="col-date" />
+            <col class="col-day" />
+            <col class="col-type" />
+            <col class="col-name" />
+          </colgroup>
+          <tr>
+            <th>Date</th>
+            <th>Day</th>
+            <th> </th>
+            <th>Name</th>
+          </tr>
+        </table>
+      </div>
+
+      <!-- next month"s pool -->
+      <div id="panel-pool" class="section">
+        <input id="btn-autopopulate" class="button" type="button" value="Fill" />
+        <input id="btn-clear-pool" class="button" type="button" value="Clear">
+        <table id="table-pool">
+          <colgroup>
+            <col class="col-name" />
+            <col class="col-exemptions" />
+            <col class="col-delete" />
+          </colgroup>
+          <tr>
+            <th>Name</th>
+            <th>Exemptions</th>
+            <th> </th>
+          </tr>
+        </table>
+      </div>
+
+      <!-- next month"s slate -->
+      <div id="panel-nextmonth" class="section">
+        <input id="btn-calculate" class="button" type="button" value="Calculate" />
+        <input id="input-window" type="number" value="8" min="3" max="10" />
+        <table id="table-nextmonth">
+          <colgroup>
+            <col class="col-date" />
+            <col class="col-day" />
+            <col class="col-type" />
+            <col class="col-name" />
+          </colgroup>
+          <tr>
+            <th>Date</th>
+            <th>Day</th>
+            <th> </th>
+            <th>Name</th>
+          </tr>
+        </table>
+      </div>
+
+    </div>
+
+    <div class="footer">
+      (C) 2022 &nbsp | &nbsp Hosted by <a href="https://www.github.com/stmorse/">Github</a>
+    </div>
+
+  </div>
+  
+  <pre id="out"></pre>
+  <pre id="cplex"></pre>
+</body>
+</html>

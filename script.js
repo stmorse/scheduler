@@ -26,9 +26,13 @@ function autopopulate () {
         if (name.length != 0 && !tpool.includes(name)) {
             let row = $("<tr>");
             row.append($("<td>").append(
-                $("<input>").attr({"type": "text", "class": "name-field", "value": name, "placeholder": "Name"})
+                $("<input>").attr({"type": "text", "class": "name-field", 
+                    "value": name, "placeholder": "Name"})
             ));
-            row.append($("<td>"));
+            row.append($("<td>").append(
+                $("<input>").attr({"type": "text", "class": "exemption-field", 
+                    "value": "", "placeholder": "Exemptions"})
+            ));
             row.append($("<td>").html("<i class='fa-solid fa-xmark' />").click(function () {
                 $(this).closest("tr").remove();
             }));
@@ -45,13 +49,19 @@ function calculate () {
         $(this).val("");
     });
 
-    // build pool based on table-pool
+    // build pool and exceptions based on table-pool
     let pool = [];
-    $("#table-pool").find("input[type=text]").each(function (i) {
-        let name = $(this).val();
+    let exemptions = [];
+    $("#table-pool").find("tr").each(function (i) {
+        let name = $(this).find("input[type=text][class='name-field']").val();
+        let exps = $(this).find("input[type=text][class='exemption-field").val();
 
         if (name.length != 0) {
-            pool.push(name);    
+            pool.push(name);
+
+            // this regex deletes whitespace in the entire string before split
+            exps = exps.replace(/\s/g, "").split(",");
+            exemptions.push(exps);
         }
     });
 
@@ -71,9 +81,6 @@ function calculate () {
         w[d] = 2;
     });
 
-    // console.log(pool);
-    // console.log(N, M, K);
-    // console.log(w);
 
     // pull last month data
     // TODO
@@ -122,6 +129,24 @@ function calculate () {
 
         // running index for constraints
         let u = 0;
+
+        // enforce all exemptions
+        for (let i=0; i < N; i++) {
+            if (exemptions[i][0] == "") {
+                continue;
+            }
+
+            for (let e of exemptions[i]) {
+                let en = parseInt(e);
+                lp["subjectTo"][u] = {
+                    name: "ce" + i + en,
+                    vars: [{name: "x-" + i + "-" + (en-1), coef: 1}],
+                    bnds: {type: glpk.GLP_FX, lb: 0}
+                };
+
+                u++;
+            } 
+        }
 
         // equality constraints (cc): enforce 1 employee per day
         // \sum_i x_ij = 1 \forall j
@@ -246,6 +271,22 @@ function fillMonth (p, tag, subtag) {
     return maxd;
 }
 
+function addPoolRow () {
+    let row = $("<tr>");
+    row.append($("<td>").append(
+        $("<input>").attr({"type": "text", "class": "name-field", 
+            "placeholder": "Name"})    
+    ));
+    row.append($("<td>").append(
+        $("<input>").attr({"type": "text", "class": "exemption-field", 
+            "placeholder": "Exemptions"})
+    ));
+    row.append($("<td>").html("<i class='fa-solid fa-xmark' />").click(function () {
+        $(this).closest("tr").remove();
+    }));
+    $("#table-pool").append(row);  
+}
+
 
 $(document).ready(function () {
 
@@ -257,14 +298,7 @@ $(document).ready(function () {
     maxd_nextmonth = fillMonth(0,  "#table-nextmonth", tag_nextmonth);
 
     // start POOL with single input line
-    let row = $("<tr>");
-    row.append($("<td>").append(
-        $("<input>").attr({"type": "text", "class": "name-field", "placeholder": "Name"})    
-    ));
-    row.append($("<td>").append(
-        $("<input>").attr({"type": "text", "placeholder": "Dates"})
-    ));
-    $("#table-pool").append(row);
+    addPoolRow();
     
 
     // BUTTON HANDLING
@@ -301,6 +335,11 @@ $(document).ready(function () {
     $("#btn-autopopulate").click(function () {
         autopopulate();
     });
+
+    // add row
+    $("#btn-add-row").click(function () {
+        addPoolRow();
+    })
 
     // calculate optimal roster
     $("#btn-calculate").click(function () {

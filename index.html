@@ -30,7 +30,7 @@
       <div id="panel-lastmonth" class="section">
         Enter the previous month's slate:<br />
         <button id="btn-demo" class="button">Demo</button>
-        <input id="btn-clear-lastmonth" class="button" type="button" value="Clear" />
+        <button id="btn-clear-lastmonth" class="button">Clear</button>
         <input id="input-lastmonth" type="text" value="March" placeholder="Month" />
         <table id="table-lastmonth">
           <colgroup>
@@ -45,26 +45,22 @@
       <!-- next month"s pool -->
       <div id="panel-pool" class="section">
         Adjust all available personnel for upcoming month's duty:<br />
-        <input id="btn-autopopulate" class="button" type="button" value="Fill" />
-        <input id="btn-clear-pool" class="button" type="button" value="Clear">
+        <button id="btn-autopopulate" class="button">Fill</button>
+        <button id="btn-clear-pool" class="button">Clear</button>
+        <button id="btn-add-row" class="button">Add row</button>
         <table id="table-pool">
           <colgroup>
             <col class="col-name" />
             <col class="col-exemptions" />
             <col class="col-delete" />
           </colgroup>
-          <tr>
-            <th>Name</th>
-            <th>Exemptions</th>
-            <th> </th>
-          </tr>
         </table>
       </div>
 
       <!-- next month"s slate -->
       <div id="panel-nextmonth" class="section">
         Calculate <a href="todo.html">optimal</a> slate for upcoming month:<br />
-        <input id="btn-calculate" class="button" type="button" value="Calculate" />
+        <button id="btn-calculate" class="button">Calculate</button>
         <input id="input-window" type="number" value="8" min="3" max="10" />
         <table id="table-nextmonth">
           <colgroup>
@@ -79,12 +75,10 @@
     </div>
 
     <div class="footer">
-      (C) 2022 &nbsp | &nbsp Hosted by <a href="https://www.github.com/stmorse/">Github</a>
+      (C) 2022 <a href="https://stmorse.github.io">Steven Morse</a> 
+      &nbsp | &nbsp Hosted by <a href="https://www.github.com/stmorse/scheduler">Github</a>
     </div>
 
   </div>
-  
-  <pre id="out"></pre>
-  <pre id="cplex"></pre>
 </body>
 </html>

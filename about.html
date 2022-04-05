@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Scheduler | About</title>
+
+  <link rel="preconnect" href="https://fonts.googleapis.com"> 
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
+
+  <script type="text/x-mathjax-config">
+    MathJax.Hub.Config({ 
+      tex2jax: {inlineMath: [['$','$']]}
+    });
+  </script>
+
+  <script type="text/javascript" async
+    src="https://cdn.mathjax.org/mathjax/latest/MathJax.js?config=TeX-MML-AM_CHTML">
+  </script>
+
+  <style>
+    * {
+      font-family: 'Quicksand', sans-serif;
+      font-size: 11pt;
+    }
+
+    #container {
+      width: 100%;
+      max-width: 600px;
+      margin: 0 auto;
+      padding: 0 10px;
+    }
+  </style>
+  
+</head>
+<body>
+  <div id="container">
+    <p>This site helps schedule a roster of employees for a one-per-day shift in an optimal way.</p>
+
+    <p>Specifically, the schedule minimizes the difference between the person with the <b>highest</b> number of (weighted) shifts and the person with the <b>lowest</b> number of (weighted) shifts, subject to the following constraints</p>
+
+    <ul>
+      <li>One employee per day</li>
+      <li>Enforce all exemptions</li>
+      <li>Weight certain days higher (e.g. weekends)</li>
+      <li>No more than one shift in a K-day window</li>
+      <li>Include the previous month in the tally of shifts and K-day windows</li>
+    </ul>
+
+    <br /><br />
+    <hr />
+    <br /><br />
+
+    In technical terms, define $x_{ij}$ as a binary variable indicating whether employee $i$ pulls duty on day $j$.  Then,
+
+    $$
+    \begin{align*}
+    \text{min}_x \ \ \ &s_{max} - s_{min} \\
+    \text{s.t.} \ \ \ &\sum_i x_{ij} = 1 \ \forall j \\
+    &\sum_j x_{ij} \leq s_{max} \ \forall i \\
+    &\sum_j x_{ij} \geq s_{min} \ \forall i
+    \end{align*}
+    $$
+  </div>
+</body>

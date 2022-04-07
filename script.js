@@ -273,6 +273,36 @@ function calculate () {
     })();
 }
 
+// Quick and simple export target #table_id into a csv
+// https://stackoverflow.com/questions/15547198/export-html-table-to-csv-using-vanilla-javascript
+function download_table_as_csv(table_id, separator=',') {
+    // Construct csv
+    let csv = [];
+    csv.push(["Date", "Day", "Weekend", "Name"]);
+    $("#" + table_id).find("tr").each(function () {
+        let tds = $(this).find("td");
+        let d = tds.eq(0).text(),
+            t = tds.eq(1).text();
+        let n = $(this).find("input[type=text]").val();
+        let wkend = $(this).find("input[type=checkbox]:checked").val();
+        wkend = (wkend == undefined) ? "N" : "Y"
+
+        csv.push([d, t, wkend, n].join(separator));
+    });
+    let csv_string = csv.join("\n");
+
+    // Download it
+    var filename = 'export_' + table_id + '_' + new Date().toLocaleDateString() + '.csv';
+    var link = document.createElement('a');
+    link.style.display = 'none';
+    link.setAttribute('target', '_blank');
+    link.setAttribute('href', 'data:text/csv;charset=utf-8,' + encodeURIComponent(csv_string));
+    link.setAttribute('download', filename);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 function fillMonth (p, tag, subtag) {
     // p=-1 => last month
     // p=0 => current month
@@ -382,4 +412,9 @@ $(document).ready(function () {
     $("#btn-calculate").click(function () {
         calculate();
     });
+
+    // export as csv button
+    $("#btn-export").click(function () {
+        download_table_as_csv("table-lastmonth");
+    })
 });

@@ -70,6 +70,30 @@ function calculate () {
     let M = maxd_nextmonth;
     let K = parseInt($("#input-window").val());
 
+    // pull last month
+    let pdata = [];
+    let Mp = $("#table-lastmonth").find("tr").length;
+    // initialize to zero
+    for (let i=0; i < N; i++) {
+        pdata[i] = [];
+        for (let j=0; j < Mp; j++) {
+            pdata[i][j] = 0;
+        }
+    }
+    // if name is in pool, insert a # in appropriate column
+    $("#table-lastmonth").find("tr").each(function (i) {
+        let tds = $(this).find("td");
+        let d = parseInt(tds.eq(0).text()),
+            n = $(this).find("input[type=text]").val(),
+            e = $(this).find("input[type=checkbox]:checked").val();
+        e = (e == undefined) ? 1 : 2;
+        let ix = pool.indexOf(n);
+
+        if (ix >= 0) {
+            pdata[ix][d-1] = e;
+        }
+    })
+
     // weighting scheme
     let w = []
     for (let j=0; j < M; j++) {
@@ -81,10 +105,6 @@ function calculate () {
         w[d] = 2;
     });
 
-
-    // pull last month data
-    // TODO
-
     
     // async glpk 
     (async () => {
@@ -93,10 +113,6 @@ function calculate () {
 
         // SHOW RESULTS (callback)
         function print(res) {
-            // const el = window.document.getElementById('out');
-            // el.innerHTML = JSON.stringify(res, null, 2);
-            // console.log(res['result']['vars']['x11']);
-            
             // iterate through all binary variables
             for (let [k,v] of Object.entries(res['result']['vars'])) {
                 if (v == 1) {
@@ -177,32 +193,38 @@ function calculate () {
                 vn[j] = {name: "x" + "-" + i + "-" + j, coef: w[j]};
             }
 
+            // incorporate last month
+            let pij = 0;
+            for (let j=0; j < Mp; j++) {
+                pij += pdata[i][j];
+            }
+
             // max
-            // \sum_j x_ij * w_j - smax <= 0 \forall i
+            // \sum_j P_ij + \sum_j x_ij * w_j <= s_max \forall i
             vx.push({name: 'smax', coef: -1});
             lp['subjectTo'][u] = {
                 name: 'cx' + i,
                 vars: vx,
-                bnds: {type: glpk.GLP_UP, ub: 0}
+                bnds: {type: glpk.GLP_UP, ub: -pij}
             }
 
             u++;
 
             // min
-            // \sum_j x_ij * w_j - smin >= 0 \forall i
+            // \sum_j P_ij + \sum_j x_ij * w_j >= smin \forall i
             vn.push({name: 'smin', coef: -1});
             lp['subjectTo'][u] = {
                 name: 'cn' + i,
                 vars: vn,
-                bnds: {type: glpk.GLP_LO, lb: 0}
+                bnds: {type: glpk.GLP_LO, lb: -pij}
             }   
 
             u++;     
         }
 
         // add max 1 shift in K window constraints
-        // TODO: incorporate last month
         for (let i=0; i < N; i++) {
+            // current month
             for (let j=0; j < (M - K + 1); j++) {
                 let vs = [];
                 for (let k=0; k < K; k++) {
@@ -212,6 +234,24 @@ function calculate () {
                     name: "cs" + i + "-" + j,
                     vars: vs,
                     bnds: {type: glpk.GLP_UP, ub: 1}
+                };
+                u++;
+            }
+
+            // previous month
+            for (let h=1; h < K; h++) {
+                let temp = 0;
+                for (let j=Mp-K+h; j < Mp; j++) {
+                    temp += pdata[i][j];
+                }
+                let vs = [];
+                for (let j=0; j < h; j++) {
+                    vs[j] = {name: "x-" + i + "-" + j, coef: 1};
+                }
+                lp["subjectTo"][u] = {
+                    name: "cso" + i + "-" + h,
+                    vars: vs,
+                    bnds: {type: glpk.GLP_UP, ub: 1-temp}
                 };
                 u++;
             }
@@ -229,9 +269,6 @@ function calculate () {
         glpk.solve(lp, {})
             .then(res => print(res))
             .catch(err => console.log(err));
-
-        // console.log(await glpk.solve(lp, glpk.GLP_MSG_DBG));
-        // window.document.getElementById('cplex').innerHTML = await glpk.write(lp);
 
     })();
 }

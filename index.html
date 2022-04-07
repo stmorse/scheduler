@@ -7,7 +7,7 @@
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
   <link rel="preconnect" href="https://fonts.googleapis.com"> 
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-  <link href="https://fonts.googleapis.com/css2?family=Quicksand:wght@300&display=swap" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css2?family=Quicksand&display=swap" rel="stylesheet">
 
   <!-- This ridiculous hack is to force cache reloading -->
   <script>
@@ -28,7 +28,7 @@
 
       <!-- last month"s slate -->
       <div id="panel-lastmonth" class="section">
-        Enter the previous month's slate:<br />
+        <p>Enter the previous month's slate. Checked days indicate "weekend" duty which is weighted higher. "Demo" loads a slate of generic names for testing.</p><br />
         <button id="btn-demo" class="button">Demo</button>
         <button id="btn-clear-lastmonth" class="button">Clear</button>
         <input id="input-lastmonth" type="text" value="March" placeholder="Month" />
@@ -44,7 +44,7 @@
 
       <!-- next month"s pool -->
       <div id="panel-pool" class="section">
-        Adjust all available personnel for upcoming month's duty:<br />
+        <p>Adjust all available personnel for upcoming month's duty. "Fill" autofills names from the previous month.  Enter exemptions as days separated by commas (e.g. 1,13,15).</p><br />
         <button id="btn-autopopulate" class="button">Fill</button>
         <button id="btn-clear-pool" class="button">Clear</button>
         <button id="btn-add-row" class="button">Add row</button>
@@ -59,7 +59,7 @@
 
       <!-- next month"s slate -->
       <div id="panel-nextmonth" class="section">
-        Calculate <a href="about.html">optimal</a> slate for upcoming month:<br />
+        <p>Calculate <a href="about.html">optimal</a> slate for upcoming month. Adjust the minimum span between shifts as desired (if the calculation returns no result after 1-2 seconds, try modifying this parameter).</p><br />
         <button id="btn-calculate" class="button">Calculate</button>
         <input id="input-window" type="number" value="8" min="3" max="10" />
         <table id="table-nextmonth">

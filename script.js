@@ -307,8 +307,14 @@ function fillMonth (p, tag, subtag) {
     // p=-1 => last month
     // p=0 => current month
 
+    let months = ["January", "February", "March", "April", "May", "June",
+                  "July", "August", "September", "October", "November", "December"];
     let days = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
     let today = new Date();
+
+    // set input
+    // TODO this should be variable
+    $("#input-lastmonth").val(months[today.getMonth()]);
 
     let maxd = new Date(today.getFullYear(), today.getMonth() + (p+1), 0).getDate();
     for (let i=0; i < maxd; i++) {
@@ -361,8 +367,8 @@ $(document).ready(function () {
     // fill lastmonth and nextmonth with dates based on current month
 
     // TODO handle edge exceptions (Jan/Dec)
-    maxd_lastmonth = fillMonth(-1, "#table-lastmonth", tag_lastmonth);
-    maxd_nextmonth = fillMonth(0,  "#table-nextmonth", tag_nextmonth);
+    maxd_lastmonth = fillMonth(0, "#table-lastmonth", tag_lastmonth);
+    maxd_nextmonth = fillMonth(1,  "#table-nextmonth", tag_nextmonth);
 
     // start POOL with single input line
     addPoolRow();
